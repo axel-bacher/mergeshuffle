@@ -17,15 +17,25 @@ void merge(unsigned int *t, unsigned int m, unsigned int n) {
     unsigned int *w = t + n;
 
     struct random r = {0, 0};
-    int p;
+
+    // treat elements four at a time
 
     while(1) {
+        // draw four random bits
         consume_bits(&r, 4);
-        p = r->x & 15;
+        int p = r->x & 15;
 
+        // 4 elements are drawn, popcnt(p) of which come from the second half
         unsigned int *uu = u + 4;
         unsigned int *vv = v + popcnt(p);
-        if(uu > v || vv > w) break;
+
+        // if proceeding would bring us too far, undo and stop
+        if(uu > v || vv > w) {
+            r->c += 4;
+            break;
+        }
+
+        // permute the elements using the selected control words
         __m128 a = perm(load(u), perm1 >> 2*p);
         __m128 b = perm(load(v), perm2 >> 2*p);
         maskstore(u, mask2 << 2*p, b);
@@ -34,7 +44,7 @@ void merge(unsigned int *t, unsigned int m, unsigned int n) {
         r->x >>= 4;
     }
 
-    r->c += 4;
+    // manage elements one at a time
 
     while(1) {
         if(flip(&r)) {
@@ -45,6 +55,8 @@ void merge(unsigned int *t, unsigned int m, unsigned int n) {
             u ++;
         }
     }
+
+    // use Fisher-Yates to finish
 
     while(u < w) {
         unsigned int i = random_int(&r, u - t + 1);

@@ -5,16 +5,24 @@
 extern unsigned long count;
 #endif
 
+// get a random 64-bit register
+
 static inline unsigned long rand64() {
     unsigned long r;
     __asm__ __volatile__("0:\n\t" "rdrand %0\n\t" "jnc 0b": "=r" (r) :: "cc");
     return r;
 }
 
+// structure containing random bits
+// the c least significant bits of x should contain fresh random data
+
 struct random {
     unsigned long x;
-    long c;
+    int c;
 };
+
+// mark as used the first b bits of r->x
+// they should be shifted out after use (r->x >>= b)
 
 static inline void consume_bits(struct random *r, int b) {
     #ifdef COUNT
@@ -39,17 +47,19 @@ static inline int flip(struct random *r) {
     return random_bits(r, 1);
 }
 
+// get a random integer between 0 and n-1
+
 static inline unsigned long random_int(struct random *r, unsigned long n) {
     unsigned long v = 1;
-    unsigned long c = 0;
+    unsigned long d = 0;
     while(1) {
-        c += c + flip(r); 
+        d += d + flip(r); 
         v += v;
 
         if(v >= n) {
-            if(c < n) return c;
+            if(d < n) return d;
             v -= n;
-            c -= n;
+            d -= n;
         }
     }
 }

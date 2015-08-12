@@ -7,6 +7,8 @@ void merge(unsigned int *t, unsigned int m, unsigned int n) {
 
     struct random r = {0, 0};
 
+    // take elements from both halves until one is exhausted
+
     while(1) {
         if(flip(&r)) {
             if(v == w) break;
@@ -15,6 +17,8 @@ void merge(unsigned int *t, unsigned int m, unsigned int n) {
             if(u == v) break;
         u ++;
     }
+
+    // finish using Fisher-Yates
 
     while(u < w) {
         unsigned int i = random_int(&r, u - t + 1);
