@@ -47,6 +47,10 @@ static inline int flip(struct random *r) {
     return random_bits(r, 1);
 }
 
+
+// (From "Optimal Discrete Uniform Generation from Coin Flips,
+// and Application" by J. Lumbroso - http://arxiv.org/abs/1304.1916 )
+//
 // get a random integer between 0 and n-1
 
 static inline unsigned long random_int(struct random *r, unsigned long n) {
