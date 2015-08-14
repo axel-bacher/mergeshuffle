@@ -23,7 +23,7 @@ void merge(unsigned int *t, unsigned int m, unsigned int n) {
     while(1) {
         // draw four random bits
         consume_bits(&r, 4);
-        int p = r->x & 15;
+        int p = r.x & 15;
 
         // 4 elements are drawn, popcnt(p) of which come from the second half
         unsigned int *uu = u + 4;
@@ -31,7 +31,7 @@ void merge(unsigned int *t, unsigned int m, unsigned int n) {
 
         // if proceeding would bring us too far, undo and stop
         if(uu > v || vv > w) {
-            r->c += 4;
+            r.c += 4;
             break;
         }
 
@@ -41,7 +41,7 @@ void merge(unsigned int *t, unsigned int m, unsigned int n) {
         maskstore(u, mask2 << 2*p, b);
         maskstore(v, mask1 << 2*p, a);
         u = uu; v = vv;
-        r->x >>= 4;
+        r.x >>= 4;
     }
 
     // manage elements one at a time

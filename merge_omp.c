@@ -1,5 +1,5 @@
 #include"fisher_yates.c"
-#include"merge.c"
+#include"merge_vec.c"
 
 void merge(unsigned int *t, unsigned int m, unsigned int n);
 extern unsigned long cutoff;

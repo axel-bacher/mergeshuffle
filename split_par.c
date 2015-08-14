@@ -1,5 +1,5 @@
 #include"fisher_yates.c"
-#include"split.c"
+#include"split_vec.c"
 #include<pthread.h>
 #include<stdio.h>
 
