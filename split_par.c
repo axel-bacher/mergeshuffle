@@ -1,5 +1,11 @@
 #include"fisher_yates.c"
+
+#ifdef __AVX__
 #include"split_vec.c"
+#else
+#include"split.c"
+#endif
+
 #include<pthread.h>
 #include<stdio.h>
 

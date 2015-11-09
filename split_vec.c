@@ -6,6 +6,8 @@
 #define perm(x, y) _mm_permutevar_ps((__m128) (x), (__m128i) (y))
 #define maskstore(x, y, z) \
     _mm_maskstore_ps((float *) (x), (__m128i) (y), (__m128) (z))
+#define sll(x, y) _mm_sll_epi32((__m128i) (x), (__m128i) (y))
+#define srl(x, y) _mm_srl_epi32((__m128i) (x), (__m128i) (y))
 #define popcnt _mm_popcnt_u64
 
 unsigned int *split(unsigned int *start, unsigned int *end) {
@@ -20,10 +22,11 @@ unsigned int *split(unsigned int *start, unsigned int *end) {
     while(start <= end - 4) {
         int p = random_bits(&r, 4);
 
-        __m128 a = perm(load(start), perm1 >> 2*p);
-        __m128 b = perm(load(mid), perm2 >> 2*p);
-        maskstore(start, mask2 << 2*p, b);
-        maskstore(mid, mask1 << 2*p, a);
+        __v4si pp = {2*p, 2*p, 2*p, 2*p};
+        __m128 a = perm(load(start), srl(perm1, pp));
+        __m128 b = perm(load(mid), srl(perm2, pp));
+        maskstore(start, sll(mask2, pp), b);
+        maskstore(mid, sll(mask1, pp), a);
         start += 4;
         mid += popcnt(p);
     }

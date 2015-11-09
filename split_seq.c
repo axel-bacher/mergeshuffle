@@ -1,5 +1,10 @@
 #include"fisher_yates.c"
+
+#ifdef __AVX__
 #include"split_vec.c"
+#else
+#include"split.c"
+#endif
 
 extern unsigned long cutoff;
 
