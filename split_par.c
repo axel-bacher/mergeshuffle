@@ -10,6 +10,7 @@
 #include<stdio.h>
 
 extern unsigned long cutoff;
+unsigned long cutoff2 = 0x100000;
 
 struct array {
     unsigned int *start;
@@ -22,15 +23,20 @@ void *shuffle_thread(void *arg) {
     unsigned int *end = a->end;
 
     if(end - start <= cutoff) {
-        fisher_yates(start, end - start);
+        fisher_yates(start, end - start); // Small input, use Fisher-Yates
     } else {
         unsigned int *mid = split(start, end);
         a->end = mid;
         struct array a2 = {mid, end};
-        pthread_t thread;
-        pthread_create(&thread, NULL, shuffle_thread, (void *) &a2);
-        shuffle_thread((void *) a);
-        pthread_join(thread, NULL);
+        if(end - start <= cutoff2) {
+            shuffle_thread((void *) a);   // Intermediate input,
+            shuffle_thread((void *) &a2); // use sequential Rao-Sandelius
+        } else {
+            pthread_t thread; // Large input, use parallel R-S
+            pthread_create(&thread, NULL, shuffle_thread, (void *) &a2);
+            shuffle_thread((void *) a);
+            pthread_join(thread, NULL);
+        }
     }
 
     return NULL;
