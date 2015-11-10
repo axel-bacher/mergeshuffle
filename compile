@@ -1,16 +1,18 @@
 #!/bin/sh
-gcc -mavx -O3 -std=c99 -fopenmp merge_omp.c permutation_time.c -o merge_par_t
-gcc -mavx -O3 -std=c99 merge_omp.c permutation_time.c -o merge_seq_t
+gcc -c merge.s
+
+gcc -mavx -O3 -std=c99 -fopenmp merge.o merge_omp.c permutation_time.c -o merge_par_t
+gcc -mavx -O3 -std=c99 merge.o merge_omp.c permutation_time.c -o merge_seq_t
 gcc -mavx -O3 -std=c99 -pthread split_par.c permutation_time.c -o split_par_t
 gcc -mavx -O3 -std=c99 split_seq.c permutation_time.c -o split_seq_t
 gcc -O3 -std=c99 -Dshuffle=fisher_yates fisher_yates.c permutation_time.c -o fisher_yates_t
 
-gcc -DCOUNT -mavx -O3 -std=c99 merge_omp.c permutation_alea.c -o merge_c
+gcc -DCOUNT -mavx -O3 -std=c99 merge_vec.c merge_omp.c permutation_alea.c -o merge_c
 gcc -DCOUNT -mavx -O3 -std=c99 split_seq.c permutation_alea.c -o split_c
 gcc -DCOUNT -O3 -std=c99 -Dshuffle=fisher_yates fisher_yates.c permutation_alea.c -o fisher_yates_c
 
-gcc -mavx -O3 -std=c99 -fopenmp merge_omp.c permutation.c -o merge_par
-gcc -mavx -O3 -std=c99 merge_omp.c permutation.c -o merge_seq
+gcc -mavx -O3 -std=c99 -fopenmp merge.o merge_omp.c permutation.c -o merge_par
+gcc -mavx -O3 -std=c99 merge.o merge_omp.c permutation.c -o merge_seq
 gcc -mavx -O3 -std=c99 -pthread split_par.c permutation.c -o split_par
 gcc -mavx -O3 -std=c99 split_seq.c permutation.c -o split_seq
 gcc -O3 -std=c99 -Dshuffle=fisher_yates fisher_yates.c permutation.c -o fisher_yates

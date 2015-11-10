@@ -1,9 +1,4 @@
 #include"fisher_yates.c"
-#ifdef __AVX__
-#include"merge_vec.c"
-#else
-#include"merge.c"
-#endif
 
 void merge(unsigned int *t, unsigned int m, unsigned int n);
 extern unsigned long cutoff;
